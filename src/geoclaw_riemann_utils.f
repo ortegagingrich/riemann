@@ -1,6 +1,7 @@
 c-----------------------------------------------------------------------
       subroutine riemann_aug_JCP(maxiter,meqn,mwaves,hL,hR,huL,huR,
-     &   hvL,hvR,bL,bR,uL,uR,vL,vR,phiL,phiR,sE1,sE2,drytol,g,sw,fw)
+     &   hvL,hvR,bL,bR,uL,uR,uhat,vL,vR,phiL,phiR,sE1,sE2,drytol,g,
+     &   sw,fw)
 
       ! solve shallow water equations given single left and right states
       ! This solver is described in J. Comput. Phys. (6): 3089-3113, March 2008
@@ -20,7 +21,7 @@ c-----------------------------------------------------------------------
       integer meqn,mwaves,maxiter
       double precision fw(meqn,mwaves)
       double precision sw(mwaves)
-      double precision hL,hR,huL,huR,bL,bR,uL,uR,phiL,phiR,sE1,sE2
+      double precision hL,hR,huL,huR,bL,bR,uL,uR,uhat,phiL,phiR,sE1,sE2
       double precision hvL,hvR,vL,vR
       double precision drytol,g
 
@@ -99,7 +100,8 @@ c     ## Is this correct 2-wave when rarecorrector == .true. ??
          r(3,mw)=(lambda(mw))**2
       enddo
       if (.not.rarecorrector) then
-         lambda(2) = 0.5d0*(lambda(1)+lambda(3))
+          lambda(2) = uhat
+c         lambda(2) = 0.5d0*(lambda(1)+lambda(3))
 c         lambda(2) = max(min(0.5d0*(s1m+s2m),sE2),sE1)
          r(1,2)=0.d0
          r(2,2)=0.d0
@@ -133,7 +135,7 @@ c     !determine a few quanitites needed for steady state wave if iterated
             uRstar=uR
             huLstar=uLstar*hLstar
             huRstar=uRstar*hRstar
-            lambda(2) = 0.5d0*(lambda(1)+lambda(3))
+c           lambda(2) = 0.5d0*(lambda(1)+lambda(3))
 c           lambda(2) = max(min(0.5d0*(s1m+s2m),sE2),sE1)
             r(1,2)=0.d0
             r(2,2)=0.d0

@@ -204,7 +204,7 @@ c               bL=hstartest+bR
          maxiter = 1
 
          call riemann_aug_JCP(maxiter,3,3,hL,hR,huL,
-     &        huR,hvL,hvR,bL,bR,uL,uR,vL,vR,phiL,phiR,sE1,sE2,
+     &        huR,hvL,hvR,bL,bR,uL,uR,uhat,vL,vR,phiL,phiR,sE1,sE2,
      &                                    drytol,g,sw,fw)
 
 c         call riemann_ssqfwave(maxiter,meqn,mwaves,hL,hR,huL,huR,
