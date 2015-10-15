@@ -36,6 +36,10 @@ c
       use geoclaw_module,only:g => grav,drytol=>dry_tolerance
       use geoclaw_module, only: earth_radius, deg2rad
       use amr_module, only: mcapa
+      
+      !temporary counter tests
+      use amr_module, only: roe_solves, full_solves
+      use amr_module, only: retry_solves, total_solves
 
       implicit none
 
@@ -93,8 +97,10 @@ c
       !loop through Riemann problems at each grid cell
       do i=2-mbc,mx+mbc
          
-         !COUNTING
-         !totalcount=totalcount+1
+         !COUNTING total solves
+!$OMP CRITICAL (totalsolvescounter)
+         total_solves = total_solves + 1
+!$OMP END CRITICAL (totalsolvescounter)
 
 !-----------------------Initializing-----------------------------------
          !inform of a bad riemann problem from the start
@@ -169,6 +175,11 @@ c
         go to 14 !try the roe solver
 
  13       continue !continue here to use full solver
+          !count full solves
+!$OMP CRITICAL (fullsolvescounter)
+          full_solves = full_solves + 1
+!$OMP END CRITICAL (fullsolvescounter)
+          
       	   !check for wet/dry boundary
      	    if (hR.gt.drytol) then
         	    uR=huR/hR
@@ -294,7 +305,9 @@ c      else
           ! simple f-wave Roe solver if depth > roe_depth on both sides:
           
           !COUNT
-          !roecount=roecount+1
+!$OMP CRITICAL (roesolvescounter)
+          roe_solves = roe_solves + 1
+!$OMP END CRITICAL (roesolvescounter)
           
           !compute velocities and momentum fluxes
           uL=huL/hL
@@ -334,6 +347,10 @@ c      else
           huRoe=huL+beta1*sRoe1
           hRoe=hL+beta1
           if(abs(huRoe)>roe_mom_rat*(hRoe-roe_min_depth)) then
+              !count full retries
+!$OMP CRITICAL (retrysolvescounter)
+              retry_solves = retry_solves + 1
+!$OMP END CRITICAL (retrysolvescounter)
               go to 13 !retry with the full solver
           endif
           !continue with roe solver
