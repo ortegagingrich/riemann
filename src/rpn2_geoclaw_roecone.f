@@ -100,10 +100,7 @@ c
       !loop through Riemann problems at each grid cell
       do i=2-mbc,mx+mbc
          
-         !COUNTING total solves
-!$OMP CRITICAL (totalsolvescounter)
-         total_solves = total_solves + 1
-!$OMP END CRITICAL (totalsolvescounter)
+
 
 !-----------------------Initializing-----------------------------------
          !inform of a bad riemann problem from the start
@@ -149,6 +146,11 @@ c
 
          hvL=qr(nv,i-1) 
          hvR=ql(nv,i)
+         
+         !COUNTING total solves
+!$OMP CRITICAL (totalsolvescounter)
+         total_solves = total_solves + 1
+!$OMP END CRITICAL (totalsolvescounter)
         
         !check to see if a Roe solver is possible
 
