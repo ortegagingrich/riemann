@@ -40,6 +40,10 @@ c
       !temporary counter tests
       use amr_module, only: roe_solves, full_solves
       use amr_module, only: retry_solves, total_solves
+      
+      !hybrid solver parameters
+      use amr_module, only: roe_depth_frac 
+      use amr_module, only: roe_min_depth, roe_mom_rat
 
       implicit none
 
@@ -74,7 +78,6 @@ c
       double precision delh,delhu,delphi,delb,delhdecomp,delphidecomp
       double precision deldelh,deldelphi
       double precision beta1,beta2,beta3,del1,del2,del3
-      double precision roe_depth_frac, roe_min_depth, roe_mom_rat
       double precision hRoe, huRoe
       
       
@@ -148,9 +151,6 @@ c
          hvR=ql(nv,i)
         
         !check to see if a Roe solver is possible
-        roe_depth_frac = 0.2d0
-        roe_min_depth = 2.d0
-        roe_mom_rat = 0.25d0 !maximum ratio of momentum to depth
 
         !are both states above the minimum depth?
         if ((hL<roe_min_depth) .or. (hR<roe_min_depth)) then
